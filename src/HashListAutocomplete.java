@@ -23,7 +23,13 @@ public class HashListAutocomplete implements Autocompletor {
         if(returnPrefix.length() > MAX_PREFIX) {
             returnPrefix = returnPrefix.substring(0, MAX_PREFIX);
         }
+        if(myMap.containsKey(returnPrefix)==false) {
+            return new ArrayList<Term>();
+        }
         List<Term> all = myMap.get(returnPrefix);
+        if(all.size() == 0) {
+            return new ArrayList<Term>();
+        }
         List<Term> list = all.subList(0, Math.min(k, all.size()));
         return list;
     }
@@ -33,13 +39,10 @@ public class HashListAutocomplete implements Autocompletor {
         myMap = new HashMap<String, List<Term>>();
         for(int i = 0; i<terms.length;i++) {
             String prefix = terms[i];
-            if(terms[i].length() > MAX_PREFIX) {
-                prefix = prefix.substring(0, MAX_PREFIX);
+            for(int j = 0; j<terms[i].length() || j<MAX_PREFIX;j++) {
+                myMap.putIfAbsent(prefix.substring(j),new ArrayList<Term>());
+                myMap.get(prefix.substring(j)).add(new Term(terms[i],weights[i]));
             }
-            if(myMap.containsKey(prefix)==false) {
-                myMap.put(prefix, new ArrayList<Term>());
-            }
-            myMap.get(prefix).add(new Term(terms[i], weights[i]));
         }
         for(List<Term> list : myMap.values()) {
             Collections.sort(list,Comparator.comparing(Term::getWeight).reversed());
