@@ -16,9 +16,6 @@ public class HashListAutocomplete implements Autocompletor {
 
     @Override
     public List<Term> topMatches(String prefix, int k) {
-        if(myMap.containsKey(prefix) == false) {
-            return new ArrayList<Term>();
-        }
         if(k == 0) {
             return new ArrayList<Term>();
         }
