@@ -10,16 +10,18 @@ public class HashListAutocomplete implements Autocompletor {
             throw new NullPointerException("One or more arguments null");
         }
 
-        if (terms.length != weights.length) {
-            throw new IllegalArgumentException("terms and weights are not the same length");
-        }
-
         initialize(terms,weights);
     }
 
 
     @Override
     public List<Term> topMatches(String prefix, int k) {
+        if(myMap.containsKey(prefix) == false) {
+            return new ArrayList<Term>();
+        }
+        if(k == 0) {
+            return new ArrayList<Term>();
+        }
         if(prefix.length() > MAX_PREFIX) {
             prefix = prefix.substring(0, MAX_PREFIX);
         }
@@ -31,10 +33,14 @@ public class HashListAutocomplete implements Autocompletor {
     public void initialize(String[] terms, double[] weights) {
         myMap = new HashMap<String, List<Term>>();
         for(int i = 0; i<terms.length;i++) {
-            if(myMap.containsKey(terms[i].substring(MAX_PREFIX))==false) {
-                myMap.put(terms[i].substring(MAX_PREFIX), new ArrayList<Term>());
+            String prefix = terms[i];
+            if(terms[i].length() > MAX_PREFIX) {
+                prefix = prefix.substring(0, MAX_PREFIX);
             }
-            myMap.get(terms[i].substring(MAX_PREFIX)).add(new Term(terms[i], weights[i]));
+            if(myMap.containsKey(prefix)==false) {
+                myMap.put(prefix, new ArrayList<Term>());
+            }
+            myMap.get(prefix).add(new Term(terms[i], weights[i]));
         }
         for(List<Term> list : myMap.values()) {
             Collections.sort(list,Comparator.comparing(Term::getWeight).reversed());

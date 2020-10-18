@@ -109,6 +109,9 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		}
 
 		// write code here for P5 assignment
+		if(k == 0) {
+			return new ArrayList<>();
+		}
 		PriorityQueue<Term> pq =
 				new PriorityQueue<Term>(Comparator.comparing(Term::getWeight));
 		for(int i = first; i < last+1; i++) {
@@ -121,9 +124,9 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		}
 
 		int numResults = Math.min(k, pq.size());
-		LinkedList<Term> ret = new LinkedList<>();
+		ArrayList<Term> ret = new ArrayList<>();
 		for (int i = 0; i < numResults; i++) {
-			ret.addFirst(pq.remove());
+			ret.add(pq.remove());
 		}
 		return ret;
 	
