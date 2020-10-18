@@ -128,8 +128,8 @@ public class BinarySearchAutocomplete implements Autocompletor {
 		for (int i = 0; i < numResults; i++) {
 			ret.add(pq.remove());
 		}
+		Collections.reverse(ret);
 		return ret;
-	
 	}
 
 	@Override

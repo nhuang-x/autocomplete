@@ -22,11 +22,13 @@ public class HashListAutocomplete implements Autocompletor {
         if(k == 0) {
             return new ArrayList<Term>();
         }
-        if(prefix.length() > MAX_PREFIX) {
-            prefix = prefix.substring(0, MAX_PREFIX);
+        String returnPrefix = prefix;
+        if(returnPrefix.length() > MAX_PREFIX) {
+            returnPrefix = returnPrefix.substring(0, MAX_PREFIX);
         }
-        List<Term> all = myMap.get(prefix);
-        return all.subList(0, Math.min(k, all.size()));
+        List<Term> all = myMap.get(returnPrefix);
+        List<Term> list = all.subList(0, Math.min(k, all.size()));
+        return list;
     }
 
     @Override
