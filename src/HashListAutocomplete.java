@@ -3,7 +3,7 @@ import java.util.*;
 public class HashListAutocomplete implements Autocompletor {
     private static final int MAX_PREFIX = 10;
     private Map<String, List<Term>> myMap;
-    private int mySize = 0;
+    private int mySize;
 
     public HashListAutocomplete(String[] terms, double[] weights) {
         if (terms == null || weights == null) {
@@ -16,20 +16,10 @@ public class HashListAutocomplete implements Autocompletor {
 
     @Override
     public List<Term> topMatches(String prefix, int k) {
-        if(k == 0) {
+        if(k == 0 || myMap.containsKey(prefix)==false) {
             return new ArrayList<Term>();
         }
-        String returnPrefix = prefix;
-        if(returnPrefix.length() > MAX_PREFIX) {
-            returnPrefix = returnPrefix.substring(0, MAX_PREFIX);
-        }
-        if(myMap.containsKey(returnPrefix)==false) {
-            return new ArrayList<Term>();
-        }
-        List<Term> all = myMap.get(returnPrefix);
-        if(all.size() == 0) {
-            return new ArrayList<Term>();
-        }
+        List<Term> all = myMap.get(prefix);
         List<Term> list = all.subList(0, Math.min(k, all.size()));
         return list;
     }
@@ -39,12 +29,13 @@ public class HashListAutocomplete implements Autocompletor {
         myMap = new HashMap<String, List<Term>>();
         for(int i = 0; i<terms.length;i++) {
             String prefix = terms[i];
-            for(int j = 0; j<terms[i].length() && j<MAX_PREFIX;j++) {
-                myMap.putIfAbsent(prefix.substring(j),new ArrayList<Term>());
-                myMap.get(prefix.substring(j)).add(new Term(terms[i],weights[i]));
+            for(int j = 0; j<=terms[i].length() && j<=MAX_PREFIX;j++) {
+                myMap.putIfAbsent(prefix.substring(0, j),new ArrayList<Term>());
+                myMap.get(prefix.substring(0, j)).add(new Term(terms[i],weights[i]));
             }
         }
-        for(List<Term> list : myMap.values()) {
+        for(String key : myMap.keySet()) {
+            List<Term> list = myMap.get(key);
             Collections.sort(list,Comparator.comparing(Term::getWeight).reversed());
         }
     }
